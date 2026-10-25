@@ -25,6 +25,8 @@ export const FRED_SERIES = [
 ];
 
 const day = (ms) => new Date(ms).toISOString().slice(0, 10);
+// Third-party data ends up in the page; only plain YYYY-MM-DD dates are kept.
+const isDay = (d) => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function getJSON(url, tries = 3) {
@@ -68,6 +70,7 @@ async function fetchCoinMetrics() {
   const out = { t: [] };
   for (const m of metrics) out[m] = [];
   for (const r of rows) {
+    if (!isDay(String(r.time).slice(0, 10))) continue;
     out.t.push(r.time.slice(0, 10));
     for (const m of metrics) out[m].push(r[m] == null ? null : Number(r[m]));
   }
@@ -128,7 +131,7 @@ async function fetchFred(id) {
   for (const line of lines) {
     const [d, val] = line.split(',');
     const n = Number(val);
-    if (!d || val === '' || val === '.' || !Number.isFinite(n)) continue;
+    if (!isDay(d) || val === '' || val === '.' || !Number.isFinite(n)) continue;
     t.push(d); v.push(n);
   }
   await save(`fred/${id}.json`, { t, v });

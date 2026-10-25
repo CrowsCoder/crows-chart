@@ -276,8 +276,8 @@ chart.subscribeCrosshairMove((param) => {
   if (!hits.length) { tooltip.hidden = true; return; }
   const rows = hits.slice(0, 8).map((h) => {
     const it = ITEM_BY_ID[h.item.id];
-    if (h.e) return `<div class="t-row" style="--c:${it.color}"><b>${esc(h.e.label)}</b> · ${h.e.d}${h.e.note ? `<div class="t-note">${esc(h.e.note)}</div>` : ''}</div>`;
-    return `<div class="t-row" style="--c:${it.color}"><b>${esc(h.z.label)}</b> · ${h.z.from} → ${h.z.to || 'today'}${h.z.note ? `<div class="t-note">${esc(h.z.note)}</div>` : ''}</div>`;
+    if (h.e) return `<div class="t-row" style="--c:${it.color}"><b>${esc(h.e.label)}</b> · ${esc(h.e.d)}${h.e.note ? `<div class="t-note">${esc(h.e.note)}</div>` : ''}</div>`;
+    return `<div class="t-row" style="--c:${it.color}"><b>${esc(h.z.label)}</b> · ${esc(h.z.from)} → ${esc(h.z.to || 'today')}${h.z.note ? `<div class="t-note">${esc(h.z.note)}</div>` : ''}</div>`;
   }).join('') + (hits.length > 8 ? `<div class="t-note">+${hits.length - 8} more</div>` : '');
   tooltip.innerHTML = rows; tooltip.hidden = false;
   const w = chartEl.clientWidth;
@@ -291,14 +291,14 @@ function renderDrawer() {
   if (!bars.length) return;
   const ids = S.active.filter((id) => BUILT[id] && compareInstances(BUILT[id]).length);
   if (!ids.includes(S.compareId)) S.compareId = ids[ids.length - 1] || null;
-  $('#drawerTabs').innerHTML = ids.map((id) => `<button data-id="${id}" class="${id === S.compareId ? 'on' : ''}">${esc(ITEM_BY_ID[id].name)}</button>`).join('');
+  $('#drawerTabs').innerHTML = ids.map((id) => `<button data-id="${esc(id)}" class="${id === S.compareId ? 'on' : ''}">${esc(ITEM_BY_ID[id].name)}</button>`).join('');
   const body = $('#drawerBody');
   if (!S.compareId) { body.innerHTML = '<p class="muted">Turn on an event or period overlay to see BTC\'s % move before, during and after each one.</p>'; return; }
   const W = S.windowDays || 90;
   const inst = compareInstances(BUILT[S.compareId]);
   const st = compareStats(bars, inst, W);
   const hasDuring = st.rows.some((r) => r.during != null);
-  const row = (r) => `<tr data-from="${r.start}" data-to="${r.end}"><td>${esc(r.label)}</td><td>${r.start}${r.end !== r.start ? ' → ' + r.end : ''}</td><td>${r.future ? 'future' : '$' + fmtPrice(r.price)}</td>` +
+  const row = (r) => `<tr data-from="${esc(r.start)}" data-to="${esc(r.end)}"><td>${esc(r.label)}</td><td>${esc(r.start)}${r.end !== r.start ? ' → ' + esc(r.end) : ''}</td><td>${r.future ? 'future' : '$' + fmtPrice(r.price)}</td>` +
     `<td class="${pctCls(r.before)}">${fmtPct(r.before)}</td>${hasDuring ? `<td class="${pctCls(r.during)}">${fmtPct(r.during)}${r.ongoing ? ' <span class="muted">so far</span>' : ''}</td>` : ''}<td class="${pctCls(r.after)}">${fmtPct(r.after)}</td></tr>`;
   body.innerHTML = `<p class="cmp-info">BTC % change ${W} days before → start${hasDuring ? ', start → end' : ''}, and end → ${W} days after. Change the window with the Before/after slider. Click a row to zoom.</p>
     <p class="cmp-info">Future and still-running rows are not in the average or median.</p>
