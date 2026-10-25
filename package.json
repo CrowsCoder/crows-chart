@@ -1,0 +1,21 @@
+{
+  "name": "crows-chart",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Crows Chart — BTC chart from 2010 with clickable macro, cycle and news overlays",
+  "scripts": {
+    "start": "node server/server.mjs",
+    "fetch": "node server/fetch-data.mjs",
+    "docs": "node scripts/gen-docs.mjs"
+  },
+  "dependencies": {
+    "lightweight-charts": "5.2.1"
+  },
+  "license": "MIT",
+  "homepage": "https://cryptocrow.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CrowsCoder/crows-chart.git"
+  }
+}

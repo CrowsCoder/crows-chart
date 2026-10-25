@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crows Chart — BTC</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="coin">₿</span> Crows Chart</div>
+    <div class="tf" role="group" aria-label="Timeframe">
+      <button data-tf="D">1D</button><button data-tf="W">1W</button><button data-tf="M">1M</button>
+    </div>
+    <button id="logBtn" class="toggle" title="Log / linear price scale">Log</button>
+    <button id="fitBtn" title="Show all history">Fit all</button>
+    <label class="win" title="Shade this many days before and after each event line">
+      Before/after
+      <input id="winSlider" type="range" min="0" max="730" step="15" value="180">
+      <span id="winVal">180d</span>
+    </label>
+    <div class="spacer"></div>
+    <span id="dataInfo" class="muted"></span>
+    <button id="refreshBtn" title="Download fresh data now">Refresh data</button>
+    <span id="bridge" class="bridge" title="Claude link">● Claude</span>
+  </header>
+
+  <div class="main">
+    <aside id="panel" class="panel">
+      <div class="panel-head">
+        <input id="search" type="search" placeholder="Search overlays…" autocomplete="off">
+        <div class="active-row"><span id="activeCount">0 on</span><button id="clearAll" class="link">Clear all</button></div>
+      </div>
+      <div id="groups" class="groups"></div>
+    </aside>
+    <div id="panelResizer" class="v-resizer" title="Drag to resize"></div>
+
+    <section class="chart-col">
+      <div id="chartWrap" class="chart-wrap">
+        <div id="chart" class="chart"></div>
+        <div id="legend" class="legend"></div>
+        <div id="tooltip" class="tooltip" hidden></div>
+        <div id="note" class="note" hidden>
+          <div class="note-head"><strong id="noteTitle">Claude</strong><button id="noteClose" class="link" aria-label="Close">✕</button></div>
+          <div id="noteBody" class="note-body"></div>
+        </div>
+      </div>
+      <div id="drawerResizer" class="h-resizer" title="Drag to resize"></div>
+      <section id="drawer" class="drawer">
+        <div class="drawer-head">
+          <strong>Compare</strong>
+          <div id="drawerTabs" class="tabs"></div>
+          <div class="spacer"></div>
+          <button id="drawerToggle" class="link">Hide</button>
+        </div>
+        <div id="drawerBody" class="drawer-body"><p class="muted">Turn on an event or period overlay to see BTC's % move before, during and after each one.</p></div>
+      </section>
+    </section>
+  </div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
