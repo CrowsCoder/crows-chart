@@ -1,0 +1,59 @@
+# Daily: download fresh data, build the static public site, and force-push it to the
+# `site` branch. Cloudflare Pages watches `site` and publishes chart.cryptocrow.io.
+# No secrets needed: GITHUB_TOKEN pushes the branch, Cloudflare's Git link deploys it.
+name: Publish public site
+
+on:
+  schedule:
+    - cron: '20 1 * * *'   # 01:20 UTC, after the daily BTC candle closes
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-site
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Start from yesterday's published data, so one source failing today keeps
+      # its last good file instead of disappearing from the site.
+      - name: Restore last published data
+        run: |
+          if git ls-remote --exit-code --heads origin site >/dev/null; then
+            git fetch --depth 1 origin site
+            mkdir -p data
+            git archive FETCH_HEAD data | tar -x -C . || true
+            rm -f data/meta.json
+          fi
+
+      - name: Fetch data
+        run: npm run fetch
+
+      - name: Build public site
+        run: npm run build:public
+
+      - name: Push to site branch
+        run: |
+          cd dist
+          git init -q -b site
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Publish $(date -u +%Y-%m-%dT%H:%MZ) from ${GITHUB_SHA::7}"
+          git push -q --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" site

@@ -5,3 +5,4 @@ screenshots/
 .claude/
 *.tmp
 .DS_Store
+dist/

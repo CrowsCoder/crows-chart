@@ -402,8 +402,8 @@ export const ITEMS = [
     build: () => ({ events: E.POLICY_EVENTS.filter((e) => /futures/i.test(e.label)) }) },
 
   // ───────── Sentiment & structure
-  { id: 'fear-greed', group: 'sentiment', name: 'Fear & Greed Index', grade: 'B', needs: ['feargreed'], desc: 'alternative.me, from Feb 2018. Below 25 extreme fear, above 75 extreme greed.',
-    build: (ctx) => ({ lines: [{ name: 'Fear & Greed', target: 'pane', format: 'num', levels: [25, 50, 75], points: cols(ctx.get('feargreed')) }] }) },
+  { id: 'fear-greed', group: 'sentiment', name: 'Fear & Greed Index (alternative.me)', grade: 'B', needs: ['feargreed'], desc: 'Source: Alternative.me Crypto Fear & Greed Index (alternative.me), from Feb 2018. Below 25 extreme fear, above 75 extreme greed.',
+    build: (ctx) => ({ lines: [{ name: 'Fear & Greed · Source: alternative.me', target: 'pane', format: 'num', levels: [25, 50, 75], points: cols(ctx.get('feargreed')) }] }) },
   { id: 'eth-btc', group: 'sentiment', name: 'ETH/BTC ratio', grade: 'B', needs: ['ethbtc'], desc: 'Bitstamp, from Aug 2017. Rising = altcoin risk appetite.',
     build: (ctx) => ({ lines: [{ name: 'ETH/BTC', target: 'pane', format: 'num', points: cols(ctx.get('ethbtc')) }] }) },
 

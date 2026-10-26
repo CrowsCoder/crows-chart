@@ -7,6 +7,10 @@ import { resampleCandles, resampleSeries, compareStats, addDays, isDay } from '.
 import { DateMapper, OverlayPrimitive } from './overlay-primitive.js';
 
 const $ = (sel) => document.querySelector(sel);
+// The public build (scripts/build-public.mjs) sets these meta tags: no local server,
+// no Claude link, and some overlays hidden for data-licence reasons.
+const PUBLIC = document.querySelector('meta[name="crows-mode"]')?.content === 'public';
+const HIDDEN = new Set((document.querySelector('meta[name="crows-hide"]')?.content || '').split(',').filter(Boolean));
 const store = {
   get(k, d) { try { const v = localStorage.getItem('ch.' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
   set(k, v) { try { localStorage.setItem('ch.' + k, JSON.stringify(v)); } catch { /* storage blocked */ } },
@@ -219,7 +223,7 @@ function setWindow(days) {
 function buildPanel() {
   const open = store.get('openGroups', ['cycle', 'rates', 'politics', 'wars']);
   const html = GROUPS.map((g) => {
-    const items = ITEMS.filter((i) => i.group === g.id).map((i) => `
+    const items = ITEMS.filter((i) => i.group === g.id && !HIDDEN.has(i.id)).map((i) => `
       <div class="item${S.active.includes(i.id) ? ' on' : ''}" data-id="${i.id}" style="--c:${i.color}" title="${esc(i.desc)}">
         <span class="dot"></span><span class="txt"><span class="name">${esc(i.name)}</span><span class="desc">${esc(i.desc)}</span></span>
         <span class="grade ${i.grade}" title="Evidence grade">${i.grade}</span>
@@ -347,8 +351,23 @@ function showNote(title, text) {
 }
 $('#noteClose').addEventListener('click', () => { note.hidden = true; });
 
+// Fixed, trusted text (no outside data), so innerHTML is safe here.
+const ABOUT_HTML = `<p><b>Crows Chart</b> by <b>Crypto Crow</b>: Bitcoin from 2010 to today with clickable macro, cycle and news overlays.</p>
+<p><a href="https://cryptocrow.io" target="_blank" rel="noopener">CryptoCrow.io</a> · <a href="https://www.youtube.com/@cryptocrowofficial" target="_blank" rel="noopener">YouTube @cryptocrowofficial</a> · <a href="https://github.com/CrowsCoder/crows-chart" target="_blank" rel="noopener">Source code</a></p>
+<p><b>Data:</b> <span id="aboutSources"></span></p>
+<p class="muted">Not financial advice. Correlation is not cause. Bitcoin has had only 4 halving cycles, so every pattern here rests on a few examples. Event dates are hand-curated and may contain mistakes.</p>`;
+const SOURCES_HTML = document.querySelector('meta[name="crows-sources"]')?.content ||
+  'Bitstamp (candles), CoinMetrics Community (early price, on-chain), FRED / Federal Reserve Bank of St. Louis (macro), blockchain.com (difficulty), alternative.me (Fear &amp; Greed), DefiLlama (stablecoins). Chart: TradingView Lightweight Charts™, Copyright (c) 2025 TradingView, Inc. (<a href="https://www.tradingview.com/" target="_blank" rel="noopener">tradingview.com</a>).';
+$('#aboutBtn').addEventListener('click', () => {
+  $('#noteTitle').textContent = 'About Crows Chart';
+  $('#noteBody').innerHTML = ABOUT_HTML;
+  $('#aboutSources').innerHTML = SOURCES_HTML;
+  note.hidden = false;
+});
+
 let stateTimer = null;
 function pushState() {
+  if (PUBLIC) { store.set('range', pendingRange || visibleDates()); return; }
   clearTimeout(stateTimer);
   stateTimer = setTimeout(() => {
     const visible = pendingRange || visibleDates();
@@ -418,6 +437,8 @@ async function boot() {
   const [btc, meta] = await Promise.all([fetch('/data/btc.json').then((r) => r.json()), fetch('/data/meta.json').then((r) => r.json()).catch(() => null)]);
   bars = btc;
   if (meta) $('#dataInfo').textContent = `Data: ${new Date(meta.fetchedAt).toLocaleString()}`;
+  if (PUBLIC) { $('#refreshBtn').hidden = true; $('#bridge').hidden = true; $('#dataInfo').textContent = `BTC data through ${bars[bars.length - 1].t} · updated daily`; }
+  S.active = S.active.filter((id) => !HIDDEN.has(id));
   const saved = [...S.active]; S.active = [];
   const savedCompare = S.compareId;
   const savedRange = store.get('range', null);
@@ -428,6 +449,6 @@ async function boot() {
   // Short wait so autoSize has the real width before fitting. (Not rAF: it never fires in a hidden tab.)
   await new Promise((r) => setTimeout(r, 60));
   if (savedRange) setRange(savedRange.from, savedRange.to); else chart.timeScale().fitContent();
-  connectBridge();
+  if (!PUBLIC) connectBridge();
 }
 boot().catch((err) => { console.error(err); showNote('Startup error', err.message); });

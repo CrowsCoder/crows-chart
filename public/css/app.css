@@ -97,3 +97,6 @@ table.cmp tfoot td { font-weight: 600; }
 .pos { color: var(--up); }
 .neg { color: var(--down); }
 .cmp-info { color: var(--muted); margin: 6px 0; }
+
+.note-body a { color: var(--accent); }
+.note-body p { margin: 0 0 8px; }

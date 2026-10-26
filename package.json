@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node server/server.mjs",
     "fetch": "node server/fetch-data.mjs",
-    "docs": "node scripts/gen-docs.mjs"
+    "docs": "node scripts/gen-docs.mjs",
+    "build:public": "node scripts/build-public.mjs"
   },
   "dependencies": {
     "lightweight-charts": "5.2.1"
