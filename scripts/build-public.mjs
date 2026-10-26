@@ -66,6 +66,9 @@ const head = [
 const indexPath = path.join(DIST, 'index.html');
 await writeFile(indexPath, (await readFile(indexPath, 'utf8')).replace('</head>', `  ${head}\n</head>`));
 
+// A real 404 page: without it Cloudflare Pages answers every missing path with index.html.
+await writeFile(path.join(DIST, '404.html'), '<!doctype html><meta charset="utf-8"><title>Not found · Crows Chart</title><body style="background:#131722;color:#d1d4dc;font:15px sans-serif;padding:40px"><h1>Not found</h1><p><a style="color:#f7931a" href="/">Back to Crows Chart</a></p>');
+
 // Cloudflare Pages headers: data changes daily, code changes on deploy.
 await writeFile(path.join(DIST, '_headers'), `/data/*
   Cache-Control: public, max-age=3600
