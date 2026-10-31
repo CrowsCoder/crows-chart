@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crows Chart — BTC</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <meta name="crows-mode" content="public">
+  <meta name="crows-hide" content="nasdaq,hy-spread,vix,stablecoins,difficulty">
+  <meta name="crows-sources" content="BTC candles: &lt;a href=&quot;https://www.bitstamp.net/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>Bitstamp&lt;/a>. Early price and on-chain metrics: &lt;a href=&quot;https://coinmetrics.io/community-network-data/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>Coin Metrics Community Data&lt;/a>, licensed &lt;a href=&quot;https://creativecommons.org/licenses/by-nc/4.0/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>CC BY-NC 4.0&lt;/a>. Macro series via &lt;a href=&quot;https://fred.stlouisfed.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>FRED&lt;/a>, Federal Reserve Bank of St. Louis: Board of Governors of the Federal Reserve System (WALCL, WTREGEN, M2SL, DFEDTARU, DTWEXBGS, DFII10), U.S. Bureau of Labor Statistics (CPIAUCSL, UNRATE), Federal Reserve Bank of New York (RRPONTSYD), Federal Reserve Bank of St. Louis (T10Y2Y, USREC; recession dates by NBER). Fear &amp;amp; Greed: &lt;a href=&quot;https://alternative.me/crypto/fear-and-greed-index/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>Alternative.me Crypto Fear &amp;amp; Greed Index&lt;/a>. Chart: TradingView Lightweight Charts™, Copyright (c) 2025 TradingView, Inc. (&lt;a href=&quot;https://www.tradingview.com/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>tradingview.com&lt;/a>). All data © its owners; this free, non-commercial page shows processed views of it.">
+  <meta name="description" content="Crows Chart by Crypto Crow: Bitcoin from 2010 to today with clickable overlays for halvings, QE/QT, rate moves, elections, wars and on-chain data.">
+  <meta property="og:title" content="Crows Chart — Bitcoin cycles, macro and news overlays">
+  <meta property="og:description" content="Turn on halvings, QE/QT, rate hikes, elections, wars and more, and see what BTC did before, during and after each one.">
+  <meta property="og:url" content="https://chart.cryptocrow.io/">
+  <link rel="canonical" href="https://chart.cryptocrow.io/">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="coin">₿</span> Crows Chart</div>
+    <div class="tf" role="group" aria-label="Timeframe">
+      <button data-tf="D">1D</button><button data-tf="W">1W</button><button data-tf="M">1M</button>
+    </div>
+    <button id="logBtn" class="toggle" title="Log / linear price scale">Log</button>
+    <button id="fitBtn" title="Show all history">Fit all</button>
+    <label class="win" title="Shade this many days before and after each event line">
+      Before/after
+      <input id="winSlider" type="range" min="0" max="730" step="15" value="180">
+      <span id="winVal">180d</span>
+    </label>
+    <div class="spacer"></div>
+    <span id="dataInfo" class="muted"></span>
+    <button id="aboutBtn" title="About, data sources and links">About</button>
+    <button id="refreshBtn" title="Download fresh data now">Refresh data</button>
+    <span id="bridge" class="bridge" title="Claude link">● Claude</span>
+  </header>
+
+  <div class="main">
+    <aside id="panel" class="panel">
+      <div class="panel-head">
+        <input id="search" type="search" placeholder="Search overlays…" autocomplete="off">
+        <div class="active-row"><span id="activeCount">0 on</span><button id="clearAll" class="link">Clear all</button></div>
+      </div>
+      <div id="groups" class="groups"></div>
+    </aside>
+    <div id="panelResizer" class="v-resizer" title="Drag to resize"></div>
+
+    <section class="chart-col">
+      <div id="chartWrap" class="chart-wrap">
+        <div id="chart" class="chart"></div>
+        <div id="legend" class="legend"></div>
+        <div id="tooltip" class="tooltip" hidden></div>
+        <div id="note" class="note" hidden>
+          <div class="note-head"><strong id="noteTitle">Claude</strong><button id="noteClose" class="link" aria-label="Close">✕</button></div>
+          <div id="noteBody" class="note-body"></div>
+        </div>
+      </div>
+      <div id="drawerResizer" class="h-resizer" title="Drag to resize"></div>
+      <section id="drawer" class="drawer">
+        <div class="drawer-head">
+          <strong>Compare</strong>
+          <div id="drawerTabs" class="tabs"></div>
+          <div class="spacer"></div>
+          <button id="drawerToggle" class="link">Hide</button>
+        </div>
+        <div id="drawerBody" class="drawer-body"><p class="muted">Turn on an event or period overlay to see BTC's % move before, during and after each one.</p></div>
+      </section>
+    </section>
+  </div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
